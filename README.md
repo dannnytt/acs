@@ -10,6 +10,6 @@
 * [Laboratory work #4](lab4/)
 * [Laboratory work #5](lab5/)
 
-# Coursework
-* [Coursework](https://github.com/dannnytt/acs-rgz)
+# RGZ
+* [RGZ](https://github.com/dannnytt/acs-rgz)
 
