@@ -1,0 +1,17 @@
+---
+- name: Создание каталога для развертывания nginx
+  file:
+    path: "{{ deploy_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Создание docker-compose.yml для nginx
+  template:
+    src: "{{ role_path }}/templates/docker-compose.yml.j2"
+    dest: "{{ deploy_path }}/docker-compose.yml"
+
+- name: Запуск nginx с использованием docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ deploy_path }}"
+    state: present
+  become: true

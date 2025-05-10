@@ -1,0 +1,18 @@
+1.  Сборка докер образа:
+    docker build -t nginx-image .
+    -t nginx-image - задание тега для докер образа
+
+2.  Запуск докер контейнера:
+    docker run -d -p 8080:80 --name nginx-container nginx-image
+    -d - запуск в фоновом режиме.
+    -p 8080:80 - пробрасывет порт 8080 локальной машины на порт 80 внутри контейнера.
+    --name nginx-container - задание имени контейнера.
+
+3.  Запуск контейнера в интерактивном режиме
+    sudo docker exec -it nginx-container bash
+
+4.  Остановка контейнера:
+    docker stop nginx-container
+
+5.  Повторный запуск контейнера:
+    docker start nginx-container

@@ -1,0 +1,61 @@
+services:
+  traefik:
+    image: traefik:latest
+    
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --entrypoints.web.address=:80
+
+    ports:
+      - "80:80"      # HTTP
+      - "8080:8080"  # Панель управления
+    
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    networks:
+      - dod4_network
+     
+  app1:
+    labels:
+      - "traefik.http.routers.web.rule=Host(`localhost`)"
+      - "traefik.http.services.web.loadbalancer.server.port=50"
+    
+    image: app_image
+
+    environment:
+      - CONTAINER_NAME=app1
+    
+    networks:
+      - dod4_network
+  
+  app2:
+    labels:
+      - "traefik.http.routers.web.rule=Host(`localhost`)"
+      - "traefik.http.services.web.loadbalancer.server.port=50"
+    
+    image: app_image
+        
+    environment:
+      - CONTAINER_NAME=app2
+    
+    networks:
+      - dod4_network
+
+  app3:
+    labels:
+      - "traefik.http.routers.web.rule=Host(`localhost`)"
+      - "traefik.http.services.web.loadbalancer.server.port=50"
+    
+    image: app_image
+    
+    environment:
+      - CONTAINER_NAME=app3
+    
+    networks:
+      - dod4_network
+
+networks:
+  dod4_network:
+    driver: bridge

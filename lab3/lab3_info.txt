@@ -1,0 +1,67 @@
+# Добавляем виртуальное окружение
+mkdir venv
+python3 -m venv venv/ansible2.17.6
+
+# Запуск виртуального окружения (для выхода - deactivate)
+source venv/ansible2.17.6/bin/activate
+pip install -r requirements.txt
+
+# Собираем образ
+docker build -t lab3_image .
+
+#Запускаем контейнеры
+docker run -d -p 2222:22 --name container1 lab3_image
+docker run -d -p 2223:22 --name container2 lab3_image
+
+# Устанавливаем ssh доверие
+ssh -p 2222 user@localhost
+ssh -p 2223 user@localhost
+
+ssh-keygen -f '/home/daniel/.ssh/known_hosts' -R '[localhost]:2222'
+ssh-keygen -f '/home/daniel/.ssh/known_hosts' -R '[localhost]:2223'
+
+# Проверка доступа контейнеров с хоста
+ansible -m ping containers
+ansible -m ping container1
+ansible -m ping container2
+
+# dod на 3
+cat ansible.cfg
+cat inventory/inventory.yaml
+ansible -m ping  container1,container2
+ansible -m shell -a "ps aux" container1
+ansible -m shell -a "ps aux" container2
+
+# dod на 4
+cat playbook/system_info.yml
+cat playbook/templates/system_info.j2
+
+ansible-playbook playbook/system_info.yml
+ansible -m shell -a "ls /home/user/system_info" containers
+ansible -m shell -a "cat /home/user/system_info/system_info.yml" container1
+ansible -m shell -a "cat /home/user/system_info/system_info.yml" container2
+
+# dod на 5
+mkdir -p roles
+ansible-galaxy role init playbook/roles/docker_compose_nginx
+
+# шаблон для docker-compose файла
+cat playbook/roles/docker_compose_nginx/templates/docker-compose.yml.j2
+
+# описание задач для роли
+cat playbook/roles/docker_compose_nginx/tasks/main.yml
+
+# переменные для роли
+cat playbook/roles/docker_compose_nginx/vars/main.yml
+
+# запуск роли в playbook
+cat playbook/deploy_nginx_containers.yml
+ansible-playbook playbook/deploy_nginx_containers.yml
+
+# Сгенерированный docker-compose файл
+# контейнер запускается на основе него
+# c помощью модуля в roles/tasks/main.yml,
+# а запуск роли происходит 
+# в playbook/deploy_nginx_containers
+
+cat deployments/nginx/docker-compose.yml

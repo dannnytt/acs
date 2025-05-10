@@ -1,0 +1,37 @@
+username: "{{ ansible_user }}"
+hostname: "{{ ansible_hostname }}"
+
+distribution_fullname: "{{ ansible_lsb.description }}"
+distribution: "{{ ansible_distribution }}"
+distribution_codename: "{{ ansible_distribution_release }}"
+version: "{{ ansible_distribution_version }}"
+distribution_family: "{{ ansible_distribution_file_variety }}"
+
+kernel:  "{{ ansible_kernel }}"
+kernel_version: "{{ ansible_kernel_version }}" 
+
+memory:
+  real:
+    total: {{ ansible_memtotal_mb }}
+    used: {{ ansible_memtotal_mb - ansible_memfree_mb }}
+    free: {{ ansible_memfree_mb }}
+  nocache:
+    free: {{ ansible_memfree_mb }}
+    used: {{ ansible_memtotal_mb - ansible_memfree_mb }}
+  swap:
+    total: {{ ansible_swaptotal_mb | default(0) }}
+    used: {{ ansible_swapused_mb | default(0) }}
+    free: {{ ansible_swapfree_mb | default(0) }}
+    cached: {{ ansible_swapcached_mb | default(0) }}
+
+processor:
+  type: "{{ ansible_processor[1] }}"
+  full_model: "{{ ansible_processor[2] }}"
+  processor_cores: "{{ ansible_processor_cores }}"
+  
+
+ip_address: "{{ ansible_default_ipv4.address }}"
+interfaces:
+  {% for interface in ansible_interfaces %}
+  - {{ interface }}
+  {% endfor %}

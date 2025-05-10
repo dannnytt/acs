@@ -1,0 +1,67 @@
+# Установка minikube
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+
+# Установка kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+
+# Установка helm
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+# Установка helmfile
+curl -LO https://github.com/roboll/helmfile/releases/download/v0.144.0/helmfile_linux_amd64
+sudo mv helmfile_linux_amd64 /usr/local/bin/helmfile
+chmod +x /usr/local/bin/helmfile
+
+
+# DoD на 3
+
+# Запуск кластера k8s c использованием драйвера виртуализации docker
+# запускает кластер k8s на локальной машине
+minikube start --driver=docker
+
+# Включение ingress
+# ingress - компонент, позволяющий маршрутизировать 
+# HTTP/HTTPS-запросы на различные сервисы внутри кластера
+minikube addons enable ingress
+
+# Применяем конфигурации для deployment, service, ingress
+kubectl apply -f deployment/nginx-deployment.yaml
+kubectl apply -f deployment/nginx-service.yaml
+kubectl apply -f deployment/nginx-ingress.yaml
+
+# Deployment — управляет созданием и масштабированием подов.
+# Service — предоставляет абстракцию для доступа к 
+                    подам через определенные порты.
+# Ingress — управляет входящим HTTP-трафиком и маршрутизирует его на 
+                        соответствующие сервисы в кластере Kubernetes.
+
+# добавить в файл
+C:\Windows\System32\drivers\etc\hosts
+# запись
+127.0.0.1 nginx.local
+
+# Проброс внешнего порта 8080 локальной машиеы на внешний порт сервиса в k8s.
+kubectl port-forward svc/nginx-service 8080:8000
+
+
+# DoD на 4
+helm create nginx-chart
+
+# Установка nginx-realese на кластер k8s
+helm install nginx-realese ./helm/nginx-chart
+
+# добавить в файл
+C:\Windows\System32\drivers\etc\hosts
+# запись
+127.0.0.1 nginx-сhart.local
+
+# Проброс внешнего порта 8080 локальной машиеы на внешний порт сервиса в k8s.
+kubectl port-forward svc/nginx-realese-service 8080:8000
+
+# Удаление релиза на кластере k8s
+helm uninstall nginx-realese
+
+# DoD на 5

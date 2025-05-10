@@ -1,0 +1,14 @@
+services:
+  nginx:
+    image: nginx:latest
+    
+    container_name: 'nginx-container'
+    
+    ports:
+      - "8080:80"
+    
+    volumes:
+      - "/home/daniel/sibsutis/acs/lab3/playbook/../deployments/nginx/html:/usr/share/nginx/html"
+    
+    restart: unless-stopped
+    

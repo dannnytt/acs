@@ -1,0 +1,51 @@
+
+services:
+  app1:
+    image: app_image
+    ports:
+      - "5001:50"
+    environment:
+      - CONTAINER_NAME=app1
+    networks:
+      dod3_network:
+        ipv4_address: 172.19.0.2
+
+  app2:
+    image: app_image
+    ports:
+      - "5002:50"
+    environment:
+      - CONTAINER_NAME=app2
+    networks:
+      dod3_network:
+        ipv4_address: 172.19.0.3
+  
+  app3:
+    image: app_image
+    ports:
+      - "5003:50"
+    environment:
+      - CONTAINER_NAME=app3
+    networks:
+      dod3_network:
+        ipv4_address: 172.19.0.4
+
+  nginx:
+    image: nginx_image
+    ports:
+      - "8080:80"
+    depends_on:
+      - app1
+      - app2
+      - app3
+    networks:
+      dod3_network:
+        ipv4_address: 172.19.0.5
+
+networks:
+  dod3_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/24
+          gateway: 172.19.0.1

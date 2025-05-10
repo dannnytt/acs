@@ -1,0 +1,4 @@
+- name: Развертывание контейнеров с nginx
+  hosts: localhost
+  roles:
+    - docker_compose_nginx

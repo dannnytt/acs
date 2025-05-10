@@ -1,0 +1,24 @@
+- name: Генерация информации о контейнерах
+  hosts: containers
+  gather_facts: true
+  become: yes
+  tasks:
+    - name: Создание каталога на удаленной машине
+      file:
+        path: "/home/{{ ansible_user }}/system_info"
+        state: directory
+
+    - name: Сохранение информации о системе на удаленной машине
+      ansible.builtin.template:
+        src: templates/system_info.j2
+        dest: "/home/{{ ansible_user }}/system_info/system_info.yml"
+
+    - name: Создание каталога на локальной машине для хранения данных с контейнера
+      file:
+        path: "{{ playbook_dir }}/{{ inventory_hostname }}"
+        state: directory
+
+    - name: Сохранение информации о системе с контейнера в директории плейбука на локальной машине
+      ansible.builtin.template:
+        src: templates/system_info.j2
+        dest: "{{ playbook_dir }}/{{ inventory_hostname }}/system_info.yml"

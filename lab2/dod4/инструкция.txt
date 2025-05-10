@@ -1,0 +1,78 @@
+1.  Процесс остановки контейнера осуществляется следующим образом:
+
+    Остановка контейнера: 
+        Команда docker stop отправляет сигнал SIGTERM 
+        (терминальный сигнал завершения) основному процессу, который работает внутри 
+        контейнера. Это позволяет контейнеру завершить выполнение текущих задач и 
+        корректно завершиться.
+
+    Время ожидания: 
+        После отправки SIGTERM Docker ждёт определённое время 
+        (по умолчанию 10 секунд), чтобы дать контейнеру время корректно завершиться. 
+        Если основной процесс не завершился в течение этого времени, 
+        Docker отправляет сигнал SIGKILL, принуждая контейнер завершиться немедленно.
+
+    Остановка всех процессов: 
+        После получения сигнала SIGTERM контейнер 
+        должен завершить выполнение своих процессов. Если контейнер не реагирует 
+        на SIGTERM, Docker отправляет сигнал SIGKILL, который завершает все процессы 
+        в контейнере мгновенно.
+
+2.  Демонстрирование уровней изоляции
+    
+    1.  PID:
+        docker run -d --pid=host --name pid_test1 ubuntu-image
+        docker run -d --name pid_test2 ubuntu-image
+
+    2.  IPC:
+        docker run -d --name ipc_test1 ubuntu image
+        docker run -d --ipc=none --name ipc_test2 ubuntu-image
+
+        ipcs, ipcmk -Q, ipcrm -q
+
+    3.  network:
+        docker network create test_network1
+        docker network create test_network2
+
+        docker run -d --network test_network1 --name network_test1 ubuntu-image
+        docker run -d --network test_networ2 --name network_test2 ubuntu-image
+        docker network inspect <network_name>
+
+    4.  users:
+        docker run -d --name user_test1 ubuntu image
+        docker run -d --name user_test2 ubuntu image
+
+        useradd -m user1
+        passwd user1
+        useradd -m user2
+        passwd user2
+
+        id <user>
+
+    5.  mount:
+        mkdir /tmp/shared_data
+        echo "Это общий файл" > /tmp/shared_data/shared_file.txt
+
+        docker run -d --name mount_test1 -v /tmp/shared_data:/mnt/shared_data ubuntu-image
+        docker run -d --name mount_test2 ubuntu-image
+
+        docker exec -it mount_test1 bash
+        ls /mnt/shared_data
+        cat /mnt/shared_data/shared_file.txt
+
+    6.  uts:
+        docker run -d --name uts_test1 --hostname custom_host1 ubuntu-image
+        docker run -d --name uts_test1 --hostname custom_host2 ubuntu-image
+
+        docker exec -it uts_test1 bash
+        hostname
+        docker exec -it uts_test2 bash
+        hostname
+
+        docker exec -it uts_test1 bash
+        hostnamectl set-hostname new_host1
+        hostname
+
+
+как однозначно определить что ты находишься в контейнере - cat /proc/1/cgroup
+    
